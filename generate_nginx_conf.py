@@ -1,3 +1,7 @@
+from pathlib import Path
+
+LOCALDIR = Path(__file__).parent.resolve()
+
 path2url = {
     "/netron": "http://localhost:8080",
     # "/anotherpath": "http://localhost:9090",
@@ -30,13 +34,14 @@ def generate_location_blocks(path2url):
         location_blocks += location_block_template.format(path=path, url=url)
     return location_blocks
 
-def generate_nginx_conf(path2url, filename="./config/nginx/site-confs/default.conf"):
+def generate_nginx_conf(path2url: dict[str, str], filename: Path):
     locations = generate_location_blocks(path2url)
     nginx_conf = nginx_conf_template.format(locations=locations)
 
-    with open(filename, "w") as file:
-        file.write(nginx_conf)
+    filename.parent.mkdir(parents=True, exist_ok=True)
+    filename.write_text(nginx_conf)
     print(f"NGINX configuration written to {filename}")
 
 if __name__ == "__main__":
+    filename = LOCALDIR / "config/nginx/site-confs/default.conf"
     generate_nginx_conf(path2url)
