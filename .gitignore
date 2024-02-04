@@ -1,0 +1,2 @@
+config/*
+config/nginx/proxy.conf

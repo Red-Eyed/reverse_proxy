@@ -1,12 +1,12 @@
 path2url = {
     "/netron": "http://localhost:8080",
-    "/anotherpath": "http://localhost:9090",
+    # "/anotherpath": "http://localhost:9090",
     # Add more path mappings as needed
 }
 
 nginx_conf_template = """
 server {{
-    listen 80;
+    listen 4443;
 
 {locations}
 
@@ -18,6 +18,7 @@ server {{
 
 location_block_template = """
     location {path} {{
+        rewrite ^{path}(/.*)$ $1 break;
         proxy_pass {url};
         include /config/nginx/proxy.conf;  # Includes common proxy settings
     }}
@@ -29,7 +30,7 @@ def generate_location_blocks(path2url):
         location_blocks += location_block_template.format(path=path, url=url)
     return location_blocks
 
-def generate_nginx_conf(path2url, filename="./config/default.conf"):
+def generate_nginx_conf(path2url, filename="./config/nginx/site-confs/default.conf"):
     locations = generate_location_blocks(path2url)
     nginx_conf = nginx_conf_template.format(locations=locations)
 
