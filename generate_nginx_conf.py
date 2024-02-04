@@ -1,12 +1,7 @@
+import json
 from pathlib import Path
 
 LOCALDIR = Path(__file__).parent.resolve()
-
-path2url = {
-    "/netron": "http://localhost:8080",
-    # "/anotherpath": "http://localhost:9090",
-    # Add more path mappings as needed
-}
 
 nginx_conf_template = """
 server {{
@@ -28,11 +23,13 @@ location_block_template = """
     }}
 """
 
+
 def generate_location_blocks(path2url):
     location_blocks = ""
     for path, url in path2url.items():
         location_blocks += location_block_template.format(path=path, url=url)
     return location_blocks
+
 
 def generate_nginx_conf(path2url: dict[str, str], filename: Path):
     locations = generate_location_blocks(path2url)
@@ -42,6 +39,9 @@ def generate_nginx_conf(path2url: dict[str, str], filename: Path):
     filename.write_text(nginx_conf)
     print(f"NGINX configuration written to {filename}")
 
+
 if __name__ == "__main__":
-    filename = LOCALDIR / "config/nginx/site-confs/default.conf"
-    generate_nginx_conf(path2url)
+    config = LOCALDIR / "config/nginx/site-confs/default.conf"
+    path2url = json.loads((LOCALDIR / "path2url.json").read_text())
+
+    generate_nginx_conf(path2url, config)
