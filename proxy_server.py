@@ -44,13 +44,6 @@ def build_app(proxy_config: dict[str, str]):
                     cookies=request.cookies,
                     allow_redirects=False)
 
-                # Handle redirect responses by modifying the location header
-                if resp.status_code in (301, 302, 303, 307, 308):
-                    location = resp.headers.get('Location', '')
-                    if location.startswith('/'):
-                        new_location = f"/{prefix}{location}"
-                        return redirect(new_location, code=resp.status_code)
-
                 # Forward the response, including cookies
                 excluded_headers = ['content-encoding', 'content-length', 'transfer-encoding', 'connection']
                 headers = [(name, value) for (name, value) in resp.raw.headers.items() if name.lower() not in excluded_headers]
