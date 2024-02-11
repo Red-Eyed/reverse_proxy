@@ -12,6 +12,7 @@ flask-socketio = "^5.3.6"
 requests = "^2.31.0"
 python-socketio = {extras = ["client"], version = "^5.11.1"}
 expression = {extras = ["pydantic"], version = "^5.0.2"}
+beautifulsoup4 = "^4.12.3"
 
 
 [build-system]

@@ -1,10 +1,13 @@
 import logging
 from pathlib import Path
+from pprint import pprint
+import re
 from flask import Flask, request, Response, redirect
 import requests
 import json
 import socketio
 from urllib.parse import urljoin, urlparse
+from bs4 import BeautifulSoup
 
 
 def get_proxy_config(p: Path):
@@ -45,10 +48,38 @@ def serve(proxy_config: dict[str, str], host: str, port: str):
                         # Assuming the application is mounted at the root of the domain
                         new_location = f"/{prefix}{location}"
                         return redirect(new_location, code=resp.status_code)
-
+                
                 # Forward the response
                 excluded_headers = ['content-encoding', 'content-length', 'transfer-encoding', 'connection', 'location']
                 headers = [(name, value) for (name, value) in resp.raw.headers.items() if name.lower() not in excluded_headers]
+
+                print(f"{path=}")
+                print(f"{resp.headers=}")
+
+                content_type = resp.headers.get('Content-Type', '')
+                if 'text/html' in content_type:
+                    soup = BeautifulSoup(resp.content, 'html.parser')
+                    
+                    # Check if there is already a <base> tag
+                    if not soup.find('base'):
+                        # Create a new <base> tag
+                        new_base_tag = soup.new_tag('base', href=f'/{prefix}/')
+                        
+                        # Find the <head> section and prepend the new <base> tag
+                        head = soup.head
+                        if head:
+                            head.insert(0, new_base_tag)
+                        else:
+                            # If there's no <head> section, create one and add it to the beginning of the HTML document
+                            head = soup.new_tag('head')
+                            soup.html.insert(0, head)
+                            head.append(new_base_tag)
+
+                    # Convert back to string and create a new response
+                    modified_html = str(soup)
+                    response = Response(modified_html, resp.status_code, headers)
+                    return response
+                
                 response = Response(resp.content, resp.status_code, headers)
                 return response
 
