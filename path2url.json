@@ -1,3 +1,4 @@
 {
-    "/netron": "http://localhost:8080"
+    "qbittorrent": "http://192.168.1.37:8080",
+    "adguard": "http://192.168.1.37:3000"
 }
