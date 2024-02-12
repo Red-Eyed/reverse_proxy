@@ -1,3 +1,4 @@
 config/*
 config/nginx/proxy.conf
 path2url.json
+__pycache__/
