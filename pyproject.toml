@@ -7,12 +7,13 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.10"
-flask = "^3.0.2"
-flask-socketio = "^5.3.6"
-requests = "^2.31.0"
-expression = {extras = ["pydantic"], version = "^5.0.2"}
-waitress = "^3.0.0"
+flask = "^3.0"
+flask-socketio = "^5.3"
+requests = "^2.3"
+waitress = "^3.0"
 
+[tool.poetry.scripts]
+reverse_proxy = "reverse_proxy.proxy_server:main"
 
 [build-system]
 requires = ["poetry-core"]

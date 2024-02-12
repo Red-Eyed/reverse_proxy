@@ -77,11 +77,14 @@ def parse_args():
 
     return args
 
-if __name__ == '__main__':
+def main():
     args = parse_args()
     cfg = get_proxy_config(args.cfg_path)
 
 
     app = build_app(proxy_config=cfg)
     serve(app, args.ip, args.port, args.debug)
-        
+
+
+if __name__ == '__main__':
+    main()
